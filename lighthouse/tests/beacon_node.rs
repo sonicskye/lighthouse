@@ -85,6 +85,31 @@ fn wss_checkpoint_flag() {
         .run_with_zero_port()
         .with_config(|config| assert_eq!(config.chain.weak_subjectivity_checkpoint, state));
 }
+
+#[test]
+fn checkpoint_sync_url() {
+    CommandLineTest::new()
+        .flag(
+            "checkpoint-sync-url",
+            Some("http://localhost:9545,https://infura.io/secret"),
+            // TODO: use more appropriate urls as example
+        )
+        .run_with_zero_port()
+        .with_config(|config| {
+            match &config.genesis {
+                beacon_node::ClientGenesis::CheckpointSyncUrl {
+                    genesis_state_bytes,
+                    url,
+                } => {
+                    println!("URL received: {:?}", url);
+                    todo!("Here we need to verify that the urls are what we expect. Check eth1_endpoints_flag for a good example")},
+                other => {
+                    panic!("genesis should use a checkpoint url")
+                }
+            }
+        });
+}
+
 #[test]
 fn max_skip_slots_flag() {
     CommandLineTest::new()
