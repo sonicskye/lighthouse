@@ -387,7 +387,10 @@ pub fn get_config<E: EthSpec>(
                 anchor_block_bytes,
             }
         } else if let Some(remote_bn_url) = cli_args.value_of("checkpoint-sync-url") {
-            let url = SensitiveUrl::parse(remote_bn_url)
+            let url = remote_bn_url
+                .split(',')
+                .map(SensitiveUrl::parse)
+                .collect::<Result<_, _>>()
                 .map_err(|e| format!("Invalid checkpoint sync URL: {:?}", e))?;
 
             ClientGenesis::CheckpointSyncUrl {
